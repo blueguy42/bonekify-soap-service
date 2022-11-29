@@ -34,7 +34,7 @@ public class DBUtil {
       return rs;
     }catch(Exception e){
       e.printStackTrace();
-      return null;
+      throw e;
     }
   }
 }

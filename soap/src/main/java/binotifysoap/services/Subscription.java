@@ -8,8 +8,11 @@ import javax.jws.soap.SOAPBinding.Style;
 import javax.annotation.Resource;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+
 import com.sun.net.httpserver.HttpExchange;
 import java.text.SimpleDateFormat;
+import java.sql.*;
+import java.util.*;
 
 @WebService
 @SOAPBinding(style=Style.DOCUMENT)
@@ -17,21 +20,24 @@ public class Subscription {
   @Resource
   WebServiceContext wsContext;
 
-  MessageContext msgx = this.wsContext.getMessageContext();
-  HttpExchange exchange = (HttpExchange)this.msgx.get("com.sun.xml.ws.http.exchange");
+  
 
   private void log(String desc, String endpoint){
-    try{      
-      System.out.println("Client IP = " + this.exchange.getRemoteAddress()); 
+    try{    
+      MessageContext msgx = this.wsContext.getMessageContext();
+      HttpExchange exchange = (HttpExchange)msgx.get("com.sun.xml.ws.http.exchange");  
+      System.out.println("Client IP = " + exchange.getRemoteAddress()); 
       DBUtil db = new DBUtil();
       System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date()));
-      db.create(String.format("INSERT INTO Logging(description,IP,endpoint,requested_at) VALUES ('%s','%s','%s','%s')",desc,this.exchange.getRemoteAddress(),endpoint, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date())));
+      db.create(String.format("INSERT INTO Logging(description,IP,endpoint,requested_at) VALUES ('%s','%s','%s','%s')",desc,exchange.getRemoteAddress(),endpoint, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new java.util.Date())));
     }catch(Exception e){
       e.printStackTrace();
     }
   }
 
   private boolean check(){
+    MessageContext msgx = this.wsContext.getMessageContext();
+    HttpExchange exchange = (HttpExchange)msgx.get("com.sun.xml.ws.http.exchange");
     String apiKey = exchange.getRequestHeaders().getFirst("apiKey");
     String source = exchange.getRequestHeaders().getFirst("source");
 
@@ -67,6 +73,32 @@ public class Subscription {
       }
     }catch(Exception e){
       e.printStackTrace();
+    }
+  }
+
+  @WebMethod
+  public ArrayList<ADTSubscription> getPendingSubscriber() throws Exception {
+    try{
+      if(check()){
+        this.log("mengambil semua pending subscriber","localhost/soap/subscription");
+        DBUtil db = new DBUtil();
+        ResultSet rs = db.read("SELECT creator_id,subscriber_id FROM Subscription WHERE status='PENDING'");
+        ArrayList<ADTSubscription> records=new ArrayList<ADTSubscription>();
+        while(rs.next()){
+          int cols = rs.getMetaData().getColumnCount();
+          Object[] arr = new Object[cols];
+          for(int i=0; i<cols; i++){
+            arr[i] = rs.getObject(i+1);
+          }
+          records.add(new ADTSubscription((int) arr[0], (int) arr[1]));
+        }
+        return records;
+      }else{
+        throw new Exception();
+      }
+    }catch(Exception e){
+      e.printStackTrace();
+      throw e;
     }
   }
 }
