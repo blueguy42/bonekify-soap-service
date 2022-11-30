@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `Logging`;
 CREATE TABLE `Logging` (
   `id` int NOT NULL AUTO_INCREMENT,
   `description` varchar(256) NOT NULL,
-  `IP` varchar(16) NOT NULL,
+  `IP` varchar(32) NOT NULL,
   `endpoint` varchar(256) NOT NULL,
   `requested_at` datetime NOT NULL,
   PRIMARY KEY (`id`)
