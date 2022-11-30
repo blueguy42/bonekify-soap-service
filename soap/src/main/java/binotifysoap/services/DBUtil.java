@@ -4,9 +4,9 @@ import java.sql.*;
 
 public class DBUtil {
   private Connection connection;
-  private static String DB_URL = "jdbc:mysql://localhost/soap";
+  private static String DB_URL = "jdbc:mysql://db-soap/soap_database";
   private static String DB_Username = "root";
-  private static String DB_Password = "password";
+  private static String DB_Password = "root";
 
   public DBUtil(){
     try{

@@ -7,6 +7,6 @@ public class App
 {
     public static void main( String[] args )
     {
-        Endpoint.publish("http://localhost:9999/soap/subscription",new Subscription());
+        Endpoint.publish("http://0.0.0.0:1401/",new Subscription());
     }
 }
