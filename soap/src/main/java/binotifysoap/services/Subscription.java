@@ -14,6 +14,8 @@ import java.text.SimpleDateFormat;
 import java.sql.*;
 import java.util.*;
 
+import java.net.URL;
+
 @WebService
 @SOAPBinding(style=Style.DOCUMENT)
 public class Subscription {
@@ -70,6 +72,7 @@ public class Subscription {
         this.log(String.format("mengubah status subscription creator_id=%d dan subscriber_id =%d",creator_id,subscriber_id),"localhost/soap/subscription");
         DBUtil db = new DBUtil();
         db.create(String.format("UPDATE Subscription SET status='%s' WHERE creator_id=%d AND subscriber_id=%d",status,creator_id,subscriber_id));
+        Process process = Runtime.getRuntime().exec(String.format("curl -X GET http://bonekify-plain-app/public/subscribe/setstatus/%d/%d/%s",creator_id,subscriber_id,status));
       }
     }catch(Exception e){
       e.printStackTrace();
