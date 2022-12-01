@@ -110,7 +110,7 @@ public class Subscription {
       if(check()){
         this.log("mengambil semua artis yang telah disubscribe","localhost/soap/subscription");
         DBUtil db = new DBUtil();
-        ResultSet rs = db.read(String.format("SELECT creator_id FROM Subscription WHERE subscriber_id=%d",user_id));
+        ResultSet rs = db.read(String.format("SELECT creator_id FROM Subscription WHERE subscriber_id=%d AND status='ACCEPTED'",user_id));
         ArrayList<Integer> records=new ArrayList<Integer>();
         while(rs.next()){
           int cols = rs.getMetaData().getColumnCount();
