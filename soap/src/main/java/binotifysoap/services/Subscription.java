@@ -38,16 +38,14 @@ public class Subscription {
   private boolean check(){
     MessageContext msgx = this.wsContext.getMessageContext();
     HttpExchange exchange = (HttpExchange)msgx.get("com.sun.xml.ws.http.exchange");
-    String apiKey = exchange.getRequestHeaders().getFirst("apiKey");
-    String source = exchange.getRequestHeaders().getFirst("source");
-    Boolean legal = true;//(apiKey=="123123" && source=="REST") || (apiKey=="321321" && source=="PLAIN");
-
+    String apiKey = exchange.getRequestHeaders().getFirst("x-api-key");
+    String source = exchange.getRequestHeaders().getFirst("origin");
+    Boolean legal = (apiKey.equals("123123") && source.equals("REST") )|| (apiKey.equals("321321") && source.equals("PLAIN"));
+    System.out.println(apiKey+source+legal);
+    System.out.println(apiKey);
+    System.out.println(source);
     //bandingkan apikey dan source
-    if( legal ){
-      return true;
-    }else{
-      return false;
-    }
+    return legal;
     
   }
 
