@@ -28,7 +28,6 @@ CREATE TABLE IF NOT EXISTS `Subscription` (
 INSERT INTO `Subscription` VALUES
 (2,2,'PENDING'),
 (3,2,'ACCEPTED'),
-(4,2,'REJECTED'),
-(5,2,'PENDING');
+(4,2,'REJECTED');
 
 COMMIT;
