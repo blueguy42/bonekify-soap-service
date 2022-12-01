@@ -103,22 +103,17 @@ public class Subscription {
   }
 
   @WebMethod
-  public ArrayList<Integer> getSubscribed(Integer user_id) throws Exception{
+  public Boolean validate(Integer creator_id, Integer subscriber_id) throws Exception{
     try{
       if(check()){
-        this.log("mengambil semua artis yang telah disubscribe","localhost/soap/subscription");
+        this.log("validasi subscription","localhost/soap/subscription");
         DBUtil db = new DBUtil();
-        ResultSet rs = db.read(String.format("SELECT creator_id FROM Subscription WHERE subscriber_id=%d AND status='ACCEPTED'",user_id));
-        ArrayList<Integer> records=new ArrayList<Integer>();
-        while(rs.next()){
-          int cols = rs.getMetaData().getColumnCount();
-          Object[] arr = new Object[cols];
-          for(int i=0; i<cols; i++){
-            arr[i] = rs.getObject(i+1);
-          }
-          records.add((int) arr[0]);
+        ResultSet rs = db.read(String.format("SELECT status FROM Subscription WHERE creator_id=%d AND subscriber_id=%d",creator_id,subscriber_id));
+        if(rs.next()){
+          return ((String) rs.getObject(1)).equals("ACCEPTED");
+        }else{
+          throw new Exception();
         }
-        return records;
       }else{
         throw new Exception();
       }
@@ -127,4 +122,30 @@ public class Subscription {
       throw e;
     }
   }
+
+//   @WebMethod
+//   public ArrayList<Integer> getSubscribed(Integer user_id) throws Exception{
+//     try{
+//       if(check()){
+//         this.log("mengambil semua artis yang telah disubscribe","localhost/soap/subscription");
+//         DBUtil db = new DBUtil();
+//         ResultSet rs = db.read(String.format("SELECT creator_id FROM Subscription WHERE subscriber_id=%d AND status='ACCEPTED'",user_id));
+//         ArrayList<Integer> records=new ArrayList<Integer>();
+//         while(rs.next()){
+//           int cols = rs.getMetaData().getColumnCount();
+//           Object[] arr = new Object[cols];
+//           for(int i=0; i<cols; i++){
+//             arr[i] = rs.getObject(i+1);
+//           }
+//           records.add((int) arr[0]);
+//         }
+//         return records;
+//       }else{
+//         throw new Exception();
+//       }
+//     }catch(Exception e){
+//       e.printStackTrace();
+//       throw e;
+//     }
+//  }
 }
