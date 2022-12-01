@@ -14,8 +14,6 @@ import java.text.SimpleDateFormat;
 import java.sql.*;
 import java.util.*;
 
-import java.net.URL;
-
 @WebService
 @SOAPBinding(style=Style.DOCUMENT)
 public class Subscription {
@@ -42,9 +40,10 @@ public class Subscription {
     HttpExchange exchange = (HttpExchange)msgx.get("com.sun.xml.ws.http.exchange");
     String apiKey = exchange.getRequestHeaders().getFirst("apiKey");
     String source = exchange.getRequestHeaders().getFirst("source");
+    Boolean legal = true;//(apiKey=="123123" && source=="REST") || (apiKey=="321321" && source=="PLAIN");
 
     //bandingkan apikey dan source
-    if( true ){
+    if( legal ){
       return true;
     }else{
       return false;
@@ -94,6 +93,32 @@ public class Subscription {
             arr[i] = rs.getObject(i+1);
           }
           records.add(new ADTSubscription((int) arr[0], (int) arr[1]));
+        }
+        return records;
+      }else{
+        throw new Exception();
+      }
+    }catch(Exception e){
+      e.printStackTrace();
+      throw e;
+    }
+  }
+
+  @WebMethod
+  public ArrayList<Integer> getSubscribed(Integer user_id) throws Exception{
+    try{
+      if(check()){
+        this.log("mengambil semua artis yang telah disubscribe","localhost/soap/subscription");
+        DBUtil db = new DBUtil();
+        ResultSet rs = db.read(String.format("SELECT creator_id FROM Subscription WHERE subscriber_id=%d",user_id));
+        ArrayList<Integer> records=new ArrayList<Integer>();
+        while(rs.next()){
+          int cols = rs.getMetaData().getColumnCount();
+          Object[] arr = new Object[cols];
+          for(int i=0; i<cols; i++){
+            arr[i] = rs.getObject(i+1);
+          }
+          records.add((int) arr[0]);
         }
         return records;
       }else{
