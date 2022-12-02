@@ -112,7 +112,7 @@ public class Subscription {
         if(rs.next()){
           return ((String) rs.getObject(1)).equals("ACCEPTED");
         }else{
-          throw new Exception();
+          return  false;
         }
       }else{
         throw new Exception();
